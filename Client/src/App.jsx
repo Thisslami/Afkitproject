@@ -25,6 +25,7 @@ import ResetPasswordPage from "./pages/auth/reset-password";
 import AboutPage from "./pages/shopping-view/about";
 import LoadingSpinner from "./components/shopping-view/loading-spinner";
 import { Toaster } from "./components/ui/sonner";
+import ProductDetailsPage from "./pages/shopping-view/product-details-page";
 
 
 function App() {
@@ -71,6 +72,7 @@ function App() {
         <Route path="/shop" element={<ShoppingLayout />}>
           <Route path="home" element={<ShoppingHome />} />
           <Route path="listing" element={<ShoppingListing />} />
+          {/* <Route path="product/:id" element={<ProductDetailsPage />} />  */}
           <Route path="account" element={<ShoppingAccount />} />
           <Route path="search" element={<SearchProducts />} />
           <Route path="about" element={<AboutPage />} />

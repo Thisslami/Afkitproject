@@ -11,21 +11,6 @@ import {
 } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 
-const team = [
-  {
-    name: "George Kelly",
-    role: "C.E.O",
-    img: "/team/george.jpg",
-    socials: ["instagram", "linkedin", "twitter"],
-  },
-  {
-    name: "Akinyemi Oluwatosin",
-    role: "Product Designer/ Developer",
-    img: "/team/jane.jpg",
-    socials: ["linkedin", "twitter"],
-  },
-];
-
 const socialIcons = {
   instagram: <FaInstagram size={20} />,
   linkedin: <FaLinkedin size={20} />,
@@ -52,9 +37,7 @@ const AboutPage = () => {
         className="text-lg text-center text-muted-foreground max-w-2xl mx-auto leading-relaxed mb-12"
       >
         Welcome to{" "}
-        <span className="font-semibold text-primary">
-          Afkit Gadgets
-        </span>
+        <span className="text-orange-500 font-bold">Afkit</span>
         , your one-stop destination for cutting-edge gadgets at unbeatable
         prices. Our passion is to bring the latest technology right to your
         fingertips.
@@ -97,51 +80,12 @@ const AboutPage = () => {
         ))}
       </motion.div>
 
-      {/* Team Showcase */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8, delay: 0.5 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16"
-      >
-        {team.map((member, index) => (
-          <motion.div
-            key={index}
-            className="bg-card rounded-2xl shadow-lg p-6 text-center overflow-hidden relative group hover:scale-105 transition-transform"
-            whileHover={{ scale: 1.05 }}
-          >
-            <img
-              src={member.img}
-              alt={member.name}
-              className="w-28 h-28 mx-auto rounded-full border-4 border-primary mb-4 object-cover"
-            />
-            <h3 className="text-xl font-bold text-primary mb-2">
-              {member.name}
-            </h3>
-            <p className="text-muted-foreground mb-4">{member.role}</p>
-            <div className="flex justify-center gap-3">
-              {member.socials.map((social, i) => (
-                <motion.a
-                  key={i}
-                  href="#"
-                  target="_blank"
-                  whileHover={{ y: -5 }}
-                  className="text-primary hover:text-secondary cursor-pointer"
-                >
-                  {socialIcons[social]}
-                </motion.a>
-              ))}
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
-
       {/* CTA Section */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.7 }}
-        className="text-center bg-gradient-to-r from-peach-600 to-secondary rounded-2xl p-12 text-white shadow-xl"
+        className="text-center to-secondary rounded-2xl p-12 text-black shadow-xl"
       >
         <h2 className="text-3xl font-extrabold mb-4">
           Ready to Upgrade Your Tech?
