@@ -13,7 +13,6 @@ export const fetchAllFilteredProducts = createAsyncThunk(
     const query = new URLSearchParams({
       ...filterParams,
       sortBy: sortParams,
-      priceRange,
     });
 
     // Add price range to query if exists
