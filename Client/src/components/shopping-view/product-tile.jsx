@@ -108,7 +108,7 @@ function ShoppingProductTile({ product, handleAddToCart, handleViewDetails }) {
       onClick={() => handleViewDetails(product._id)}
     >
       <div className="relative w-full overflow-hidden rounded-lg">
-        {/* Image with zoom effect */}
+        
         <motion.div
           className="aspect-square bg-gray-100"
           whileHover={{ scale: 1.05 }}
@@ -121,7 +121,7 @@ function ShoppingProductTile({ product, handleAddToCart, handleViewDetails }) {
           />
         </motion.div>
 
-        {/* Condition Badge */}
+        
         {product?.condition && (
           <motion.div
             initial={{ y: -30, opacity: 0 }}
