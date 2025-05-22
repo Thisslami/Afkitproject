@@ -99,4 +99,53 @@ const getProductDetails = async (req, res) => {
   }
 };
 
-module.exports = { getFilteredProducts, getProductDetails };
+// const getProductsByBrand = async (req, res) => {
+//   try {
+//     const { brand } = req.query;
+
+//     const products = await Product.find({ brand });
+
+//     res.status(200).json({
+//       success: true,
+//       data: products,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Some error occurred",
+//     });
+//   }
+// };
+
+const getProductsByBrand = async (req, res) => {
+  try {
+    const { brand } = req.query;
+    
+    if (!brand) {
+      return res.status(400).json({
+        success: false,
+        message: "Brand parameter is required",
+      });
+    }
+
+    const products = await Product.find({ brand });
+    
+    res.status(200).json({
+      success: true,
+      data: products, // Make sure this matches what your Redux expects
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: "Some error occurred",
+    });
+  }
+};
+
+module.exports = {
+  getFilteredProducts,
+  getProductDetails,
+  getProductsByBrand, // 👈 include here
+};
