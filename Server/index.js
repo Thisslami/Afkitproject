@@ -28,9 +28,7 @@ mongoose
     // Middleware setup
     app.use(
       cors({
-        origin: ["http://localhost:5174", "https://afkitproject.onrender.com"],
-
-        // Update this to match your front-end URL
+        origin: process.env.CLIENT_URL || "http://localhost:5174",
         methods: ["GET", "POST", "PUT", "DELETE"],
         allowedHeaders: [
           "Content-Type",

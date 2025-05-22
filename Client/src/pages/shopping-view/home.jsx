@@ -49,27 +49,30 @@ const brandsWithIcon = [
   { id: "products", label: "All Products", icon: ShoppingBag },
 ];
 
-
 const supportFeatures = [
   {
     icon: FaTruck,
     title: "Swift & Secure Delivery",
-    description: "Our fast delivery policy applies to all orders, regardless of the order value or destination.",
+    description:
+      "Our fast delivery policy applies to all orders, regardless of the order value or destination.",
   },
   {
     icon: FaCreditCard,
     title: "Secure & Seamless Payment",
-    description: "Your payment is always safe, secure, and protected at all times.",
+    description:
+      "Your payment is always safe, secure, and protected at all times.",
   },
   {
     icon: FaHeadset,
     title: "24/7 Support",
-    description: "We are available 24/7 to assist you with any question, or issues you may have.",
+    description:
+      "We are available 24/7 to assist you with any question, or issues you may have.",
   },
   {
     icon: FaShieldAlt,
     title: "Six Month Warranty",
-    description: "All products come with a 6-month warranty for your peace of mind.",
+    description:
+      "All products come with a 6-month warranty for your peace of mind.",
   },
 ];
 
@@ -90,11 +93,23 @@ function ShoppingHome() {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const isMobile = windowWidth < 640;
   const isTablet = windowWidth >= 640 && windowWidth < 1024;
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+
+  useEffect(() => {
+    const checkScreen = () => setIsSmallScreen(window.innerWidth < 640);
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
+
+  const categoriesToShow = isSmallScreen ? categoriesWithIcon.slice(0, 4) : categoriesWithIcon;
+  const brandsToShow = isSmallScreen ? brandsWithIcon.slice(0, 4) : brandsWithIcon;
+
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const shuffleArray = (array) => {
@@ -125,9 +140,9 @@ function ShoppingHome() {
     navigate(`/shop/listing`);
   }
 
-  function handleGetProductDetails(getCurrentProductId) {
-    dispatch(fetchProductDetails(getCurrentProductId));
-  }
+  const handleViewProductDetails = (productId) => {
+    navigate(`/shop/product/${productId}`);
+  };
 
   function handleAddToCart(getCurrentProductId) {
     if (!user) {
@@ -192,61 +207,68 @@ function ShoppingHome() {
       ? [...productList, ...productList].slice(featuredIndex, featuredIndex + 4)
       : productList;
 
+      
+
+
   return (
     <div className="flex flex-col min-h-screen">
- <div className="w-full min-h-screen flex items-center justify-center bg-gray-100 px-4">
-  <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-      className="bg-white p-6 sm:p-10 rounded-xl shadow-md flex flex-col justify-center items-start h-full text-center md:text-left"
-    >
-     <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-700 mb-6 leading-tight">
-  At{" "}
-  <span className="text-orange-500 font-bold">Afkit</span>, we sell integrity and value for your money
-  with a six months warranty
-</h1>
+      <div className="w-full min-h-screen flex items-center justify-center bg-gray-100 px-4">
+        <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-white p-6 sm:p-10 rounded-xl shadow-md flex flex-col justify-center items-start h-full text-center md:text-left"
+          >
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-700 mb-6 leading-tight">
+              At <span className="text-orange-500 font-bold">Afkit</span>, we
+              sell integrity and value for your money with a six months warranty
+            </h1>
 
-<motion.div
-  initial={{ scale: 1 }}
-  animate={{ scale: [1, 1.05, 1] }}
-  transition={{ duration: 1.5, repeat: Infinity, repeatType: "loop", ease: "easeInOut" }}
->
-  <Button
-    onClick={() => navigate("/shop/listing")}
-    className="bg-blue-900 hover:bg-blue-700 text-white font-bold px-6 py-3 uppercase text-sm sm:text-base transition rounded"
-  >
-    Shop Now
-  </Button>
-</motion.div>
-
-    </motion.div>
-    <div className="relative w-full h-[250px] sm:h-[350px] md:h-[450px] lg:h-[550px] xl:h-[600px] overflow-hidden rounded-xl shadow-md">
-      {featureImageList?.map((slide, index) => (
-        <motion.div
-          key={index}
-          className="absolute top-0 left-0 w-full h-full"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: index === currentSlide ? 1 : 0 }}
-          transition={{ duration: 1 }}
-        >
-          <img
-            src={slide?.image}
-            className="w-full h-full object-cover"
-            alt={`Slide ${index + 1}`}
-          />
-        </motion.div>
-      ))}
-    </div>
-  </div>
-</div>
-
+            <motion.div
+              initial={{ scale: 1 }}
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                repeatType: "loop",
+                ease: "easeInOut",
+              }}
+            >
+              <Button
+                onClick={() => navigate("/shop/listing")}
+                className="bg-blue-900 hover:bg-blue-700 text-white font-bold px-6 py-3 uppercase text-sm sm:text-base transition rounded"
+              >
+                Shop Now
+              </Button>
+            </motion.div>
+          </motion.div>
+          <div className="relative w-full h-[250px] sm:h-[350px] md:h-[450px] lg:h-[550px] xl:h-[600px] overflow-hidden rounded-xl shadow-md">
+            {featureImageList?.map((slide, index) => (
+              <motion.div
+                key={index}
+                className="absolute top-0 left-0 w-full h-full"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: index === currentSlide ? 1 : 0 }}
+                transition={{ duration: 1 }}
+              >
+                <img
+                  src={slide?.image}
+                  className="w-full h-full object-cover"
+                  alt={`Slide ${index + 1}`}
+                />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
 
       {/* Trending Products */}
       <section className="py-8 sm:py-12 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-xl sm:text-2xl font-bold justify-start mb-6 sm:mb-8">Top Products</h2>
+          <h2 className="text-xl sm:text-2xl font-bold justify-start mb-6 sm:mb-8">
+            Top Products
+          </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
             {displayedProducts.map((productItem, index) => (
               <motion.div
@@ -258,9 +280,9 @@ function ShoppingHome() {
                 className="cursor-pointer"
               >
                 <ShoppingProductTile
-                  handleGetProductDetails={handleGetProductDetails}
                   product={productItem}
                   handleAddToCart={handleAddToCart}
+                  handleViewDetails={handleViewProductDetails}
                 />
               </motion.div>
             ))}
@@ -273,8 +295,8 @@ function ShoppingHome() {
           <div className="flex justify-start mb-6 sm:mb-8">
             <h2 className="text-xl sm:text-2xl font-bold">Shop by category</h2>
           </div>
-          <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-5 gap-2 xs:gap-3 sm:gap-4">
-            {categoriesWithIcon.map(({ id, label, icon: Icon }) => (
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+            {categoriesToShow.map(({ id, label, icon: Icon }) => (
               <motion.div
                 key={id}
                 whileHover={{ scale: 1.05 }}
@@ -302,9 +324,8 @@ function ShoppingHome() {
           <div className="flex justify-start mb-6 sm:mb-8">
             <h2 className="text-xl sm:text-2xl font-bold">Shop by Brand</h2>
           </div>
-          <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-5 gap-2 xs:gap-3 sm:gap-4">
-
-            {brandsWithIcon.map(({ id, label, icon: Icon }) => (
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+            {brandsToShow.map(({ id, label, icon: Icon }) => (
               <motion.div
                 key={id}
                 whileHover={{ scale: 1.05 }}
@@ -330,7 +351,9 @@ function ShoppingHome() {
       {/* Featured Products */}
       <section className="py-8 sm:py-12 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-xl sm:text-2xl font-bold justify-start mb-6 sm:mb-8">Featured Products</h2>
+          <h2 className="text-xl sm:text-2xl font-bold justify-start mb-6 sm:mb-8">
+            Featured Products
+          </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
             {featuredProducts.map((productItem, index) => (
               <motion.div
@@ -341,7 +364,7 @@ function ShoppingHome() {
                 whileHover={{ scale: 1.03 }}
               >
                 <ShoppingProductTile
-                  handleGetProductDetails={handleGetProductDetails}
+                  handleViewDetails={handleViewProductDetails}
                   product={productItem}
                   handleAddToCart={handleAddToCart}
                 />
@@ -369,7 +392,9 @@ function ShoppingHome() {
                   <Card className="w-full">
                     <CardContent className="flex flex-col items-center p-4 sm:p-6">
                       <Icon className="w-8 h-8 sm:w-10 sm:h-10 mb-3 text-peach-500" />
-                      <h3 className="font-bold text-base sm:text-lg mb-2 text-center">{feature.title}</h3>
+                      <h3 className="font-bold text-base sm:text-lg mb-2 text-center">
+                        {feature.title}
+                      </h3>
                       <p className="text-xs sm:text-sm text-center text-gray-600">
                         {feature.description}
                       </p>
@@ -382,13 +407,7 @@ function ShoppingHome() {
         </div>
       </section>
 
-      <CustomerReviews/>
-
-      <ProductDetailsDialog
-        open={openDetailsDialog}
-        setOpen={setOpenDetailsDialog}
-        productDetails={productDetails}
-      />
+      <CustomerReviews />
     </div>
   );
 }
