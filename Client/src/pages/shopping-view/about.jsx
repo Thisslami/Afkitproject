@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FaShieldAlt, FaTruck } from "react-icons/fa";
+import { FaShieldAlt, FaTruck,  FaCheckCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 
@@ -45,40 +45,46 @@ const AboutPage = () => {
 
       {/* Features Section */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, delay: 1 }}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-16"
-      >
-        {[
-          {
-            Icon: FaShieldAlt,
-            title: "Quality Products",
-            desc: "We source only the best quality gadgets from trusted manufacturers.",
-          },
-          {
-            Icon: FaNairaSign,
-            title: "Affordable Prices",
-            desc: "Top-notch gadgets without breaking the bank.",
-          },
-          {
-            Icon: FaTruck,
-            title: "Fast Delivery",
-            desc: "Quick and secure delivery to your doorstep.",
-          },
-        ].map((item, index) => (
-          <div
-            key={index}
-            className="bg-card rounded-2xl shadow-lg p-8 text-center hover:shadow-xl transition duration-300"
-          >
-            <item.Icon size={48} className="text-peach-500 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-primary mb-3">
-              {item.title}
-            </h3>
-            <p className="text-muted-foreground">{item.desc}</p>
-          </div>
-        ))}
-      </motion.div>
+  initial={{ opacity: 0, scale: 0.8 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 0.8, delay: 1 }}
+  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-16"
+>
+  {[
+    {
+      Icon: FaShieldAlt,
+      title: "Quality Products",
+      desc: "We source only the best quality gadgets from trusted manufacturers.",
+    },
+    {
+      Icon: FaNairaSign,
+      title: "Affordable Prices",
+      desc: "Top-notch gadgets without breaking the bank.",
+    },
+    {
+      Icon: FaTruck,
+      title: "Fast Delivery",
+      desc: "Quick and secure delivery to your doorstep.",
+    },
+    {
+      Icon: FaCheckCircle,
+      title: "6 Months Warranty",
+      desc: "Enjoy peace of mind with a 6-month warranty on select products.",
+    },
+  ].map((item, index) => (
+    <div
+      key={index}
+      className="bg-card rounded-2xl shadow-lg p-8 text-center hover:shadow-xl transition duration-300"
+    >
+      <item.Icon size={48} className="text-peach-500 mx-auto mb-4" />
+      <h3 className="text-xl font-bold text-primary mb-3">
+        {item.title}
+      </h3>
+      <p className="text-muted-foreground">{item.desc}</p>
+    </div>
+  ))}
+</motion.div>
+
 
       {/* CTA Section */}
       <motion.div
@@ -97,15 +103,15 @@ const AboutPage = () => {
         <div className="flex gap-4 justify-center">
           <Button
             asChild
-            className="bg-white text-primary font-bold hover:bg-peach-400 transition-all duration-300 shadow-lg"
+            className="bg-white text-primary font-bold hover:bg-blue-800 transition-all duration-300 shadow-lg"
           >
-            <Link to="/shop/home">Shop Now 🛒</Link>
+            <Link to="/shop/listing">Shop Now 🛒</Link>
           </Button>
 
           <Button
             asChild
             variant="outline"
-            className="border-white text-primary hover:bg-peach-400 hover:text-primary transition-all duration-300"
+            className="border-white text-primary hover:bg-blue-800 hover:text-primary transition-all duration-300"
           >
             <a href="mailto:gadgetsgridphones@gmail.com">Contact Us 📩</a>
           </Button>

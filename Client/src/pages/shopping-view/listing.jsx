@@ -24,21 +24,9 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-// function createSearchParamsHelper(filterParams) {
-//   const queryParams = [];
-//   for (const [key, value] of Object.entries(filterParams)) {
-//     if (Array.isArray(value) && value.length > 0) {
-//       value.forEach((item) => {
-//         queryParams.push(`${key}=${encodeURIComponent(item)}`);
-//       });
-//     }
-//   }
-//   return queryParams.join("&");
-// }
-
 function createSearchParamsHelper(filterParams, priceRange) {
   const queryParams = [];
-  
+
   // Handle regular filters (arrays)
   for (const [key, value] of Object.entries(filterParams)) {
     if (Array.isArray(value) && value.length > 0) {
@@ -47,13 +35,13 @@ function createSearchParamsHelper(filterParams, priceRange) {
       });
     }
   }
-  
+
   // Handle price range
   if (priceRange) {
     queryParams.push(`minPrice=${encodeURIComponent(priceRange.min)}`);
     queryParams.push(`maxPrice=${encodeURIComponent(priceRange.max)}`);
   }
-  
+
   return queryParams.join("&");
 }
 
@@ -95,7 +83,8 @@ function ShoppingListing() {
     if (getSectionId === "condition") {
       cpyFilters[getSectionId] = checked ? [getCurrentOption] : [];
     } else {
-      const indexOfCurrentSection = Object.keys(cpyFilters).indexOf(getSectionId);
+      const indexOfCurrentSection =
+        Object.keys(cpyFilters).indexOf(getSectionId);
       if (indexOfCurrentSection === -1) {
         cpyFilters = {
           ...cpyFilters,
@@ -116,9 +105,9 @@ function ShoppingListing() {
     setTimeout(() => setMinimumLoaderTime(false), 500);
   }
 
-  function handleGetProductDetails(getCurrentProductId) {
-    dispatch(fetchProductDetails(getCurrentProductId));
-  }
+  const handleViewProductDetails = (productId) => {
+    navigate(`/shop/product/${productId}`);
+  };
 
   function handleAddToCart(getCurrentProductId, getTotalStock) {
     if (!user) {
@@ -135,7 +124,9 @@ function ShoppingListing() {
       if (indexOfCurrentItem > -1) {
         const getQuantity = getCartItems[indexOfCurrentItem].quantity;
         if (getQuantity + 1 > getTotalStock) {
-          toast.error(`Only ${getQuantity} quantity can be added for this item`);
+          toast.error(
+            `Only ${getQuantity} quantity can be added for this item`
+          );
           return;
         }
       }
@@ -175,11 +166,10 @@ function ShoppingListing() {
   };
 
   // Add this state to your component
-const [priceRange, setPriceRange] = useState({
-  min: 0,
-  max: 1000000, // Adjust based on your products
-});
-
+  const [priceRange, setPriceRange] = useState({
+    min: 0,
+    max: 1000000, // Adjust based on your products
+  });
 
   useEffect(() => {
     setSort("price-lowtohigh");
@@ -200,11 +190,15 @@ const [priceRange, setPriceRange] = useState({
       const startTime = Date.now();
 
       dispatch(
-        fetchAllFilteredProducts({ filterParams: filters, sortParams: sort, priceRange })
+        fetchAllFilteredProducts({
+          filterParams: filters,
+          sortParams: sort,
+          priceRange,
+        })
       ).finally(() => {
         const elapsed = Date.now() - startTime;
         const remainingTime = Math.max(0, 500 - elapsed);
-        
+
         setTimeout(() => {
           setIsFilterLoading(false);
           setMinimumLoaderTime(false);
@@ -221,7 +215,10 @@ const [priceRange, setPriceRange] = useState({
   // Pagination logic
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = productList?.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = productList?.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
   const totalPages = Math.ceil(productList?.length / productsPerPage);
 
   // Scroll to top on page change
@@ -237,23 +234,23 @@ const [priceRange, setPriceRange] = useState({
   const handleApplyFilters = (newFilters, newPriceRange) => {
     setIsFilterLoading(true);
     setMinimumLoaderTime(true);
-    
+
     // Update the main filters and price range
     setFilters(newFilters);
     setPriceRange(newPriceRange);
     sessionStorage.setItem("filters", JSON.stringify(newFilters));
-    
+
     const startTime = Date.now();
     dispatch(
-      fetchAllFilteredProducts({ 
-        filterParams: newFilters, 
-        sortParams: sort, 
-        priceRange: newPriceRange 
+      fetchAllFilteredProducts({
+        filterParams: newFilters,
+        sortParams: sort,
+        priceRange: newPriceRange,
       })
     ).finally(() => {
       const elapsed = Date.now() - startTime;
       const remainingTime = Math.max(0, 500 - elapsed);
-      
+
       setTimeout(() => {
         setIsFilterLoading(false);
         setMinimumLoaderTime(false);
@@ -295,18 +292,18 @@ const [priceRange, setPriceRange] = useState({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
-        <ProductFilter 
-          filters={filters} 
-          handleFilter={handleFilter} 
+        <ProductFilter
+          filters={filters}
+          handleFilter={handleFilter}
           filterOptions={filterOptions}
           isMobileFilterOpen={isMobileFilterOpen}
           setIsMobileFilterOpen={setIsMobileFilterOpen}
           isFilterLoading={isFilterLoading}
-          priceRange={priceRange}          // ✅ Ensure this is passed
-          setPriceRange={setPriceRange} 
-          onApplyFilters={handleApplyFilters}    // ✅ Ensure this is passed
+          priceRange={priceRange} // ✅ Ensure this is passed
+          setPriceRange={setPriceRange}
+          onApplyFilters={handleApplyFilters} // ✅ Ensure this is passed
         />
-        
+
         <motion.div
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -316,12 +313,14 @@ const [priceRange, setPriceRange] = useState({
           <div className="p-4 border-b flex items-center justify-between">
             <h2 className="text-lg font-extrabold">All Products</h2>
             <div className="flex items-center gap-3">
-              <span className="text-muted-foreground">{productList?.length}</span>
+              <span className="text-muted-foreground">
+                {productList?.length}
+              </span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     className="flex items-center gap-1"
                     disabled={isFilterLoading}
                   >
@@ -336,10 +335,13 @@ const [priceRange, setPriceRange] = useState({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[200px]">
-                  <DropdownMenuRadioGroup value={sort} onValueChange={handleSort}>
+                  <DropdownMenuRadioGroup
+                    value={sort}
+                    onValueChange={handleSort}
+                  >
                     {sortOptions.map((sortItem) => (
-                      <DropdownMenuRadioItem 
-                        value={sortItem.id} 
+                      <DropdownMenuRadioItem
+                        value={sortItem.id}
                         key={sortItem.id}
                         disabled={isFilterLoading}
                       >
@@ -366,9 +368,9 @@ const [priceRange, setPriceRange] = useState({
               {currentProducts?.map((productItem) => (
                 <ShoppingProductTile
                   key={productItem.id}
-                  handleGetProductDetails={handleGetProductDetails}
                   product={productItem}
                   handleAddToCart={handleAddToCart}
+                  handleViewDetails={handleViewProductDetails}
                 />
               ))}
             </motion.div>
@@ -378,14 +380,23 @@ const [priceRange, setPriceRange] = useState({
           <div className="flex flex-col sm:flex-row items-center justify-between px-4 py-3 bg-background border-t rounded-b-lg gap-3">
             <div className="w-full sm:w-auto">
               <p className="text-sm text-muted-foreground text-center sm:text-left">
-                Showing <span className="font-medium">{(currentPage - 1) * productsPerPage + 1}</span> to{' '}
+                Showing{" "}
                 <span className="font-medium">
-                  {Math.min(currentPage * productsPerPage, productList?.length || 0)}
-                </span>{' '}
-                of <span className="font-medium">{productList?.length || 0}</span> results
+                  {(currentPage - 1) * productsPerPage + 1}
+                </span>{" "}
+                to{" "}
+                <span className="font-medium">
+                  {Math.min(
+                    currentPage * productsPerPage,
+                    productList?.length || 0
+                  )}
+                </span>{" "}
+                of{" "}
+                <span className="font-medium">{productList?.length || 0}</span>{" "}
+                results
               </p>
             </div>
-            
+
             <div className="flex items-center justify-center w-full sm:w-auto space-x-1">
               <Button
                 variant="outline"
@@ -401,7 +412,7 @@ const [priceRange, setPriceRange] = useState({
                 )}
                 <span className="sr-only sm:not-sr-only">Previous</span>
               </Button>
-              
+
               <div className="flex items-center space-x-1">
                 {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                   let pageNum;
@@ -414,7 +425,7 @@ const [priceRange, setPriceRange] = useState({
                   } else {
                     pageNum = currentPage - 2 + i;
                   }
-                  
+
                   return (
                     <Button
                       key={pageNum}
@@ -423,17 +434,21 @@ const [priceRange, setPriceRange] = useState({
                       onClick={() => !isLoading && handlePageChange(pageNum)}
                       disabled={isLoading || isFilterLoading}
                       className={`h-8 w-8 sm:h-9 sm:w-9 p-0 text-xs sm:text-sm ${
-                        currentPage === pageNum ? 'bg-primary text-primary-foreground' : ''
+                        currentPage === pageNum
+                          ? "bg-primary text-primary-foreground"
+                          : ""
                       }`}
                     >
                       {pageNum}
                     </Button>
                   );
                 })}
-                
+
                 {totalPages > 5 && currentPage < totalPages - 2 && (
                   <>
-                    <span className="px-1 sm:px-2 text-sm text-muted-foreground">...</span>
+                    <span className="px-1 sm:px-2 text-sm text-muted-foreground">
+                      ...
+                    </span>
                     <Button
                       variant="outline"
                       size="sm"
@@ -446,12 +461,14 @@ const [priceRange, setPriceRange] = useState({
                   </>
                 )}
               </div>
-              
+
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleNextPage}
-                disabled={currentPage === totalPages || isLoading || isFilterLoading}
+                disabled={
+                  currentPage === totalPages || isLoading || isFilterLoading
+                }
                 className="px-2 sm:px-3 py-1.5 rounded-md"
               >
                 <span className="sr-only sm:not-sr-only">Next</span>
@@ -465,12 +482,6 @@ const [priceRange, setPriceRange] = useState({
           </div>
         </motion.div>
       </div>
-      
-      <ProductDetailsDialog
-        open={openDetailsDialog}
-        setOpen={setOpenDetailsDialog}
-        productDetails={productDetails}
-      />
     </motion.div>
   );
 }
