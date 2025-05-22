@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { FaStar, FaQuoteLeft } from 'react-icons/fa';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -16,7 +17,6 @@ const CustomerReviews = () => {
       rating: 5,
       comment: 'Absolutely love my purchase! The quality exceeded my expectations and delivery was super fast. Will definitely shop here again!',
       date: 'March 15, 2024',
-      avatar: 'https://randomuser.me/api/portraits/women/43.jpg',
     },
     {
       id: 2,
@@ -24,7 +24,6 @@ const CustomerReviews = () => {
       rating: 4,
       comment: 'The product quality is outstanding and it arrived earlier than expected. Will order again.',
       date: 'April 10, 2024',
-      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
     },
     {
       id: 3,
@@ -32,7 +31,6 @@ const CustomerReviews = () => {
       rating: 5,
       comment: 'This is my second order and I’m just as impressed as the first time. Highly recommended!',
       date: 'March 28, 2024',
-      avatar: 'https://randomuser.me/api/portraits/women/8.jpg',
     },
     {
       id: 4,
@@ -40,7 +38,6 @@ const CustomerReviews = () => {
       rating: 5,
       comment: 'Solid customer service and top-notch items. I’ll definitely tell my friends about this store.',
       date: 'February 16, 2024',
-      avatar: 'https://randomuser.me/api/portraits/men/28.jpg',
     },
     {
       id: 5,
@@ -48,7 +45,6 @@ const CustomerReviews = () => {
       rating: 4,
       comment: 'Good value for money. Packaging was neat and arrived without any issues. Could improve shipping speed.',
       date: 'January 29, 2024',
-      avatar: 'https://randomuser.me/api/portraits/women/3.jpg',
     },
     {
       id: 6,
@@ -56,7 +52,6 @@ const CustomerReviews = () => {
       rating: 5,
       comment: 'Excellent experience from start to finish. The product looks even better in person.',
       date: 'March 3, 2024',
-      avatar: 'https://randomuser.me/api/portraits/men/15.jpg',
     },
   ];
 
@@ -92,22 +87,15 @@ const CustomerReviews = () => {
             {reviews.map((review) => (
               <SwiperSlide key={review.id}>
                 <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 h-full flex flex-col">
-                  <div className="flex items-center mb-4">
-                    <img 
-                      src={review.avatar} 
-                      alt={review.name} 
-                      className="w-12 h-12 rounded-full object-cover mr-4 border-2 border-purple-200"
-                    />
-                    <div>
-                      <h4 className="font-semibold text-gray-800">{review.name}</h4>
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <FaStar 
-                            key={i} 
-                            className={`text-lg ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`} 
-                          />
-                        ))}
-                      </div>
+                  <div className="mb-4">
+                    <h4 className="font-semibold text-gray-800">{review.name}</h4>
+                    <div className="flex items-center mt-1">
+                      {[...Array(5)].map((_, i) => (
+                        <FaStar 
+                          key={i} 
+                          className={`text-lg ${i < review.rating ? 'text-yellow-400' : 'text-gray-300'}`} 
+                        />
+                      ))}
                     </div>
                   </div>
                   

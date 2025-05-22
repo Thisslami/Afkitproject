@@ -196,6 +196,7 @@ import {
   fetchProductDetails,
 } from "@/store/shop/products-slice";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import LoadingSpinner from "@/components/shopping-view/loading-spinner";
 
 export default function ShoppingProductDetails() {
   const { id } = useParams();
@@ -279,7 +280,7 @@ export default function ShoppingProductDetails() {
       ?.slice(0, 4) || [];
 
   if (!productDetails) {
-    return <div className="container py-8">Loading product details...</div>;
+    return <div className="container py-8"><LoadingSpinner/></div>;
   }
 
   return (

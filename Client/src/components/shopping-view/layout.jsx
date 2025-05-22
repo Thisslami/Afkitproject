@@ -55,7 +55,7 @@ const ShoppingLayout = () => {
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 bg-peach-500 text-green p-3 rounded-full shadow-lg hover:bg-peach-600 transition-all duration-300 flex items-center gap-2"
       >
-        <FaWhatsapp size={28} />
+        <FaWhatsapp size={35} />
       </a>
 
       {/* Common Footer */}
