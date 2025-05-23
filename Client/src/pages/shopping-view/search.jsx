@@ -1,28 +1,26 @@
+
+
 // import { useEffect, useState } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 // import { useSearchParams, useNavigate } from "react-router-dom";
 // import { Input } from "@/components/ui/input";
-// import ProductDetailsDialog from "@/components/shopping-view/product-details";
 // import ShoppingProductTile from "@/components/shopping-view/product-tile";
 // import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
-// import { fetchProductDetails } from "@/store/shop/products-slice";
 // import { getSearchResults, resetSearchResults } from "@/store/shop/search-slice";
 // import { motion } from "framer-motion";
 // import debounce from "lodash.debounce";
 // import { CheckCircle, AlertCircle } from "lucide-react";
-// import { toast } from "sonner"; // ✅ replaced useToast with Sonner
+// import { toast } from "sonner";
 
 // function SearchProducts() {
 //   const [keyword, setKeyword] = useState("");
 //   const [isLoading, setIsLoading] = useState(false);
-//   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
 //   const [searchParams, setSearchParams] = useSearchParams();
 //   const dispatch = useDispatch();
+//   const navigate = useNavigate();
 //   const { searchResults } = useSelector((state) => state.shopSearch);
-//   const { productDetails } = useSelector((state) => state.shopProducts);
 //   const { user } = useSelector((state) => state.auth);
 //   const { cartItems } = useSelector((state) => state.shopCart);
-//   const navigate = useNavigate();
 
 //   const debouncedSearch = debounce((value) => {
 //     if (value.trim().length >= 3) {
@@ -40,7 +38,7 @@
 //     debouncedSearch(event.target.value);
 //   };
 
-//   function handleAddToCart(getCurrentProductId, getTotalStock) {
+//   const handleAddToCart = (getCurrentProductId, getTotalStock) => {
 //     if (!user) {
 //       navigate("/auth/login");
 //       toast.warning("Please login to add to cart.");
@@ -77,15 +75,11 @@
 //         });
 //       }
 //     });
-//   }
+//   };
 
-//   function handleGetProductDetails(getCurrentProductId) {
-//     dispatch(fetchProductDetails(getCurrentProductId));
-//   }
-
-//   useEffect(() => {
-//     if (productDetails !== null) setOpenDetailsDialog(true);
-//   }, [productDetails]);
+//   const handleViewProductDetails = (productId) => {
+//     navigate(`/shop/product/${productId}`);
+//   };
 
 //   return (
 //     <div className="container mx-auto md:px-6 px-4 py-8">
@@ -128,24 +122,20 @@
 //         {searchResults.map((item) => (
 //           <motion.div key={item.id} whileHover={{ scale: 1.05 }}>
 //             <ShoppingProductTile
-//               handleAddToCart={handleAddToCart}
 //               product={item}
-//               handleGetProductDetails={handleGetProductDetails}
+//               handleAddToCart={handleAddToCart}
+//               handleViewDetails={handleViewProductDetails}
 //             />
 //           </motion.div>
 //         ))}
 //       </motion.div>
-
-//       <ProductDetailsDialog
-//         open={openDetailsDialog}
-//         setOpen={setOpenDetailsDialog}
-//         productDetails={productDetails}
-//       />
 //     </div>
 //   );
 // }
 
 // export default SearchProducts;
+
+
 
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -158,6 +148,7 @@ import { motion } from "framer-motion";
 import debounce from "lodash.debounce";
 import { CheckCircle, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { getOrCreateSessionId } from "@/components/utils/session";
 
 function SearchProducts() {
   const [keyword, setKeyword] = useState("");
@@ -185,44 +176,74 @@ function SearchProducts() {
     debouncedSearch(event.target.value);
   };
 
-  const handleAddToCart = (getCurrentProductId, getTotalStock) => {
-    if (!user) {
-      navigate("/auth/login");
-      toast.warning("Please login to add to cart.");
-      return;
-    }
-
-    let getCartItems = cartItems.items || [];
-    if (getCartItems.length) {
-      const indexOfCurrentItem = getCartItems.findIndex(
-        (item) => item.productId === getCurrentProductId
-      );
-      if (indexOfCurrentItem > -1) {
-        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
-        if (getQuantity + 1 > getTotalStock) {
-          toast.error(`Only ${getQuantity} quantity can be added for this item`, {
-            icon: <AlertCircle className="text-red-500" />,
-          });
-          return;
-        }
+  const handleAddToCart = async (getCurrentProductId, getTotalStock) => {
+    try {
+      const userId = user?.id;
+      const sessionId = userId ? null : getOrCreateSessionId(); // fallback sessionId only if userId is not available
+  
+      if (!userId && !sessionId) {
+        throw new Error("Neither userId nor sessionId is available");
       }
-    }
-
-    dispatch(
-      addToCart({
-        userId: user?.id,
-        productId: getCurrentProductId,
-        quantity: 1,
-      })
-    ).then((data) => {
-      if (data?.payload?.success) {
-        dispatch(fetchCartItems(user?.id));
-        toast.success("Product is added to cart", {
+  
+      // Check stock for existing items
+      const currentCartItems = cartItems?.items || [];
+      const existingItem = currentCartItems.find(
+        item => item.productId === getCurrentProductId
+      );
+  
+      if (existingItem && existingItem.quantity >= getTotalStock) {
+        toast.error(`Maximum available quantity (${getTotalStock}) reached`, {
+          icon: <AlertCircle className="text-red-500" />,
+        });
+        return;
+      }
+  
+      const response = await dispatch(
+        addToCart({
+          userId,
+          productId: getCurrentProductId,
+          quantity: 1,
+          sessionId
+        })
+      ).unwrap();
+  
+      if (response.success) {
+        await dispatch(fetchCartItems({ userId, sessionId })).unwrap();
+        toast.success("Product added to cart", {
           icon: <CheckCircle className="text-green-500" />,
         });
       }
-    });
+    } catch (error) {
+      console.error('Add to cart error:', error);
+      toast.error("Failed to add product to cart");
+    }
   };
+  
+  
+  // In your useEffect for loading cart:
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const userId = user?.id;
+        const sessionId = userId ? null : getOrCreateSessionId();
+  
+        if (!userId && !sessionId) {
+          console.warn("No user or session info available");
+          return;
+        }
+  
+        await dispatch(fetchCartItems({ userId, sessionId })).unwrap();
+      } catch (error) {
+        console.error('Failed to fetch cart:', error);
+        if (!user) {
+          localStorage.removeItem('guestSessionId');
+        }
+      }
+    };
+  
+    fetchCart();
+  }, [dispatch, user]);
+  
 
   const handleViewProductDetails = (productId) => {
     navigate(`/shop/product/${productId}`);

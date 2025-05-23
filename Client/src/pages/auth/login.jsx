@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import {  Loader } from "lucide-react";
+import { Loader, CheckCircle, AlertCircle } from "lucide-react"; // Import icons
 import { Link, useNavigate } from "react-router-dom";
 import CommonForm from "@/components/common/form";
-import { toast } from "sonner"; // ✅ new toast import
+import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "@/store/auth-slice";
 import { loginFormControls } from "@/config";
@@ -26,15 +26,23 @@ function AuthLogin() {
       .then((data) => {
         setIsLoading(false);
         if (data?.payload?.success) {
-          toast.success(data?.payload?.message || "Login successful!");
+          toast.success(data?.payload?.message || "Login successful!", {
+            icon: <CheckCircle className="text-green-500" />, // Success icon
+          });
           setFormData(initialState);
         } else {
-          toast.error(data?.payload?.message || "Login failed. Please try again.");
+          toast.error(data?.payload?.message || "Login failed. Please try again.", {
+            icon: <AlertCircle className="text-red-500" />, // Error icon
+          });
         }
       })
       .catch(() => {
         setIsLoading(false);
-        setError("An error occurred. Please try again.");
+        // This catch block handles network errors or errors not caught by .then's data?.payload?.success check
+        toast.error("An unexpected error occurred. Please try again.", {
+          icon: <AlertCircle className="text-red-500" />, // Error icon for unexpected errors
+        });
+        setError("An error occurred. Please try again."); // You can keep this specific error state for local display if needed
       });
   }
 

@@ -5,7 +5,11 @@ const CartSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false, // Change to false to allow null for guest users
+    },
+    sessionId: {
+      type: String,
+      required: false, // For guest users
     },
     items: [
       {

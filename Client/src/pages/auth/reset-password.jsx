@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, Eye, EyeOff } from "lucide-react";
+import { Lock, Eye, EyeOff, CheckCircle, AlertCircle } from "lucide-react"; // Added CheckCircle and AlertCircle
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -25,7 +25,9 @@ const ResetPasswordPage = () => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
+      toast.error("Passwords do not match", {
+        icon: <AlertCircle className="text-red-500" />, // Error icon for password mismatch
+      });
       return;
     }
 
@@ -34,13 +36,17 @@ const ResetPasswordPage = () => {
         resetPassword({ token, formData: { password: formData.password } })
       ).unwrap();
 
-      toast.success("Password reset successfully, redirecting to login...");
+      toast.success("Password reset successfully, redirecting to login...", {
+        icon: <CheckCircle className="text-green-500" />, // Success icon
+      });
 
       setTimeout(() => {
         navigate("/auth/login");
       }, 2000);
     } catch (error) {
-      toast.error(error || "Error resetting password");
+      toast.error(error || "Error resetting password", {
+        icon: <AlertCircle className="text-red-500" />, // Error icon for API failure
+      });
     }
   };
 

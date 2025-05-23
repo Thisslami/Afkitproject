@@ -26,6 +26,7 @@ import AboutPage from "./pages/shopping-view/about";
 import LoadingSpinner from "./components/shopping-view/loading-spinner";
 import { Toaster } from "./components/ui/sonner";
 import ShoppingProductDetails from "./pages/shopping-view/product-details-page";
+import AuthListener from "./components/shopping-view/auth-listener";
 
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
   return (
     <div className="flex flex-col overflow-hidden bg-white">
         <Toaster/>
+        <AuthListener/>
       <Routes>
         {/* Redirect root to the shop home */}
         <Route path="/" element={<Navigate to="/shop/home" replace />} />
