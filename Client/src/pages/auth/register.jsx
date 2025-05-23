@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { toast } from "sonner"; // ✅ Use Sonner directly here
+import { toast } from "sonner";
+import { CheckCircle, AlertCircle } from "lucide-react"; // Import icons
 import { registerFormControls } from "@/config";
 import { registerUser } from "@/store/auth-slice";
 import { useState } from "react";
@@ -23,11 +24,15 @@ function AuthRegister() {
     event.preventDefault();
     dispatch(registerUser(formData)).then((data) => {
       if (data?.payload?.success) {
-        toast.success(data?.payload?.message); // ✅ Sonner version
+        toast.success(data?.payload?.message, {
+          icon: <CheckCircle className="text-green-500" />, // Success icon
+        });
         navigate("/auth/verify-email");
         setFormData(initialState);
       } else {
-        toast.error(data?.payload?.message); // ✅ Sonner version
+        toast.error(data?.payload?.message, {
+          icon: <AlertCircle className="text-red-500" />, // Error icon
+        });
       }
     });
   }

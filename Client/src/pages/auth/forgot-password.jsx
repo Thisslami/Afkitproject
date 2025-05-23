@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { forgotPassword } from '../../store/auth-slice/index';
-import { toast } from 'sonner'; // ✅ new toast import
-import { Mail, ArrowLeft, Loader } from 'lucide-react';
+import { toast } from 'sonner';
+import { Mail, ArrowLeft, Loader, CheckCircle, AlertCircle } from 'lucide-react'; // Added CheckCircle and AlertCircle
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import CommonForm from '@/components/common/form';
@@ -26,15 +26,21 @@ function ForgotPasswordPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email) {
-      toast.error("Email is required!");
+      toast.error("Email is required!", {
+        icon: <AlertCircle className="text-red-500" />, // Error icon for validation
+      });
       return;
     }
     try {
       const response = await dispatch(forgotPassword({ email: formData.email })).unwrap();
-      toast.success(response.message);
+      toast.success(response.message, {
+        icon: <CheckCircle className="text-green-500" />, // Success icon
+      });
       setIsSubmitted(true);
     } catch (err) {
-      toast.error(error || "Failed to send reset password email");
+      toast.error(error || "Failed to send reset password email", {
+        icon: <AlertCircle className="text-red-500" />, // Error icon for API failure
+      });
     }
   };
 
