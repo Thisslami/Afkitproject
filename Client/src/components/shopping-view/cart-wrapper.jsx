@@ -1,6 +1,5 @@
 
 
-
 // import { useNavigate } from "react-router-dom";
 // import { Button } from "../ui/button";
 // import { SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
@@ -8,10 +7,22 @@
 // import { ScrollArea } from "../ui/scroll-area";
 // import { Separator } from "../ui/separator";
 // import { motion } from "framer-motion";
-// import { ShoppingBag } from "lucide-react";
+// import { ShoppingBag, AlertTriangle } from "lucide-react";
+// import { toast } from "sonner";
+// import { useSelector } from "react-redux";
+
+// // Helper function to format Naira with commas
+// const formatNaira = (amount) => {
+//   return new Intl.NumberFormat('en-NG', {
+//     style: 'currency',
+//     currency: 'NGN',
+//     minimumFractionDigits: 2
+//   }).format(amount).replace('NGN', '₦');
+// };
 
 // function UserCartWrapper({ cartItems, setOpenCartSheet }) {
 //   const navigate = useNavigate();
+//   const { user } = useSelector((state) => state.auth);
 
 //   const totalCartAmount =
 //     cartItems && cartItems.length > 0
@@ -35,6 +46,38 @@
 //   const itemVariants = {
 //     hidden: { y: 20, opacity: 0 },
 //     show: { y: 0, opacity: 1 },
+//   };
+
+//   const handleCheckout = () => {
+//     if (!user) {
+//       navigate("/auth/login");
+//       setOpenCartSheet(false);
+//       toast.warning("Please login to checkout.", {
+//         icon: <AlertTriangle className="text-orange-500" />,
+//       });
+//       return;
+//     }
+
+//     if (cartItems.length === 0) return;
+
+//     // Format the cart items into a WhatsApp message
+//     const itemsList = cartItems.map(item =>
+//       `- ${item.title || 'Product'} (${item.quantity} x ${formatNaira(item.price)})`
+//     ).join("%0a");
+
+//     const total = `Total: ${formatNaira(totalCartAmount)}`;
+
+//     const message = `Hello! I'd like to place an order:%0a%0a${itemsList}%0a%0a${total}%0a%0aPlease let me know how to proceed with payment and delivery.`;
+
+//     const whatsappNumber = "+2348164014304";
+//     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+//       `Hello! I'd like to place an order:\n\n${cartItems.map(item =>
+//         `- ${item.title || 'Product'} (${item.quantity} x ${formatNaira(item.price)})`
+//       ).join('\n')}\n\nTotal: ${formatNaira(totalCartAmount)}\n\nPlease let me know how to proceed with payment and delivery.`
+//     )}`;
+
+//     window.open(whatsappUrl, '_blank');
+//     setOpenCartSheet(false);
 //   };
 
 //   return (
@@ -66,7 +109,6 @@
 //               animate={{ opacity: 1 }}
 //               transition={{ duration: 0.5 }}
 //             >
-//               {/* Empty cart animation */}
 //               <motion.div
 //                 animate={{
 //                   y: [0, -10, 0],
@@ -94,7 +136,7 @@
 //               >
 //                 Your cart feels lonely
 //               </motion.h3>
-              
+
 //               <motion.p
 //                 className="text-center text-gray-500 mb-6"
 //                 initial={{ y: -20 }}
@@ -124,7 +166,7 @@
 //         </div>
 //       </ScrollArea>
 //       {cartItems && cartItems.length > 0 && (
-//         <motion.div 
+//         <motion.div
 //           className="mt-6 space-y-4"
 //           initial={{ opacity: 0, y: 20 }}
 //           animate={{ opacity: 1, y: 0 }}
@@ -132,44 +174,14 @@
 //         >
 //           <div className="flex justify-between">
 //             <span className="font-bold">Total</span>
-//             <span className="font-bold">₦{totalCartAmount.toFixed(2)}</span>
+//             <span className="font-bold">{formatNaira(totalCartAmount)}</span>
 //           </div>
-//           {/* <Button
-//             onClick={() => {
-//               navigate("/shop/checkout");
-//               setOpenCartSheet(false);
-//             }}
-//             className="w-full mt-4"
-//             disabled={cartItems.length === 0}
-//           >
-//             Checkout
-//           </Button> */}
 //           <Button
-//   onClick={() => {
-//     const message = cartItems
-//       .map(
-//         (item, index) =>
-//           `${index + 1}. ${item.name} x${item.quantity} - ₦${(
-//             item.price * item.quantity
-//           ).toLocaleString()}`
-//       )
-//       .join("%0A");
-
-//     const total = `Total: ₦${totalCartAmount.toLocaleString()}`;
-//     const whatsappMessage = `Hello, I'd like to order the following:%0A${message}%0A%0A${total}`;
-
-//     const phoneNumber = "2348164014304"; // Your WhatsApp number
-//     const whatsappURL = `https://wa.me/${phoneNumber}?text=${whatsappMessage}`;
-
-//     window.open(whatsappURL, "_blank");
-//     setOpenCartSheet(false);
-//   }}
-//   className="w-full mt-4"
-//   disabled={cartItems.length === 0}
-// >
-//   Checkout
-// </Button>
-
+//             onClick={handleCheckout}
+//             className="w-full mt-4"
+//           >
+//             Checkout via WhatsApp
+//           </Button>
 //         </motion.div>
 //       )}
 //     </SheetContent>
@@ -186,10 +198,22 @@ import UserCartItemsContent from "./cart-items-content";
 import { ScrollArea } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import { motion } from "framer-motion";
-import { ShoppingBag } from "lucide-react";
+import { ShoppingBag, AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
+import { useSelector } from "react-redux";
+
+// Helper function to format Naira with commas
+const formatNaira = (amount) => {
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: 'NGN',
+    minimumFractionDigits: 2
+  }).format(amount).replace('NGN', '₦');
+};
 
 function UserCartWrapper({ cartItems, setOpenCartSheet }) {
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
 
   const totalCartAmount =
     cartItems && cartItems.length > 0
@@ -216,40 +240,35 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
   };
 
   const handleCheckout = () => {
+    if (!user) {
+      navigate("/auth/login");
+      setOpenCartSheet(false);
+      toast.warning("Please login to checkout.", {
+        icon: <AlertTriangle className="text-orange-500" />,
+      });
+      return;
+    }
+
     if (cartItems.length === 0) return;
-    
-    // Format the cart items into a WhatsApp message - using title instead of name
-    const itemsList = cartItems.map(item => 
-      `- ${item.title || 'Product'} (${item.quantity} x ₦${item.price.toFixed(2)})`
-    ).join("%0a"); // %0a is URL-encoded new line
-    
-    const total = `Total: ₦${totalCartAmount.toFixed(2)}`;
-    
-    const message = `Hello! I'd like to place an order:%0a%0a${itemsList}%0a%0a${total}%0a%0aPlease let me know how to proceed with payment and delivery.`;
-    
-    // Replace with your actual WhatsApp number (in international format without + or 00)
-    const whatsappNumber = "+2348164014304"; // Example Nigerian number
-    
-    // Create WhatsApp link - using encodeURIComponent for better encoding
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-      `Hello! I'd like to place an order:\n\n${cartItems.map(item => 
-        `- ${item.title || 'Product'} (${item.quantity} x ₦${item.price.toFixed(2)})`
-      ).join('\n')}\n\nTotal: ₦${totalCartAmount.toFixed(2)}\n\nPlease let me know how to proceed with payment and delivery.`
-    )}`;
-    
-    // Open WhatsApp in a new tab
+
+    const message = `Hello! I'd like to place an order:\n\n${cartItems.map(item =>
+      `- ${item.title || 'Product'} (${item.quantity} x ${formatNaira(item.price)})`
+    ).join('\n')}\n\nTotal: ${formatNaira(totalCartAmount)}\n\nPlease let me know how to proceed with payment and delivery.`;
+
+    const whatsappNumber = "+2348164014304";
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
     window.open(whatsappUrl, '_blank');
-    
-    // Close the cart sheet
     setOpenCartSheet(false);
   };
 
   return (
-    <SheetContent className="sm:max-w-md">
+    <SheetContent className="sm:max-w-md flex flex-col h-full">
       <SheetHeader>
         <SheetTitle>Your Cart</SheetTitle>
       </SheetHeader>
-      <ScrollArea className="h-[calc(100vh-200px)] pr-4">
+
+      <ScrollArea className="flex-1 pr-4 overflow-y-auto">
         <div className="mt-4 space-y-4">
           {cartItems && cartItems.length > 0 ? (
             <motion.div
@@ -273,7 +292,6 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
             >
-              {/* Empty cart animation */}
               <motion.div
                 animate={{
                   y: [0, -10, 0],
@@ -301,7 +319,7 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
               >
                 Your cart feels lonely
               </motion.h3>
-              
+
               <motion.p
                 className="text-center text-gray-500 mb-6"
                 initial={{ y: -20 }}
@@ -330,21 +348,19 @@ function UserCartWrapper({ cartItems, setOpenCartSheet }) {
           )}
         </div>
       </ScrollArea>
+
       {cartItems && cartItems.length > 0 && (
-        <motion.div 
-          className="mt-6 space-y-4"
+        <motion.div
+          className="p-4 border-t bg-white dark:bg-black sticky bottom-0 z-10"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <div className="flex justify-between">
-            <span className="font-bold">Total</span>
-            <span className="font-bold">₦{totalCartAmount.toFixed(2)}</span>
+          <div className="flex justify-between mb-3 text-base">
+            <span className="font-semibold">Total</span>
+            <span className="font-semibold">{formatNaira(totalCartAmount)}</span>
           </div>
-          <Button
-            onClick={handleCheckout}
-            className="w-full mt-4"
-          >
+          <Button onClick={handleCheckout} className="w-full">
             Checkout via WhatsApp
           </Button>
         </motion.div>

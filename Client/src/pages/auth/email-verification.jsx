@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { verifyEmail, checkAuth } from "../../store/auth-slice";
-import { toast } from "sonner"; // ✅ Updated import
+import { toast } from "sonner";
+import { CheckCircle, AlertCircle } from "lucide-react"; // Import icons
 
 const EmailVerificationPage = () => {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
@@ -45,22 +46,31 @@ const EmailVerificationPage = () => {
 
     try {
       await dispatch(verifyEmail({ code: verificationCode })).unwrap();
-      toast.success("Email verified successfully, login to continue");
+      toast.success("Email verified successfully, login to continue", {
+        icon: <CheckCircle className="text-green-500" />, // Success icon
+      });
 
+      // Clear the token cookie
       document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      // Re-check authentication status after clearing token, might not be strictly necessary
+      // if your login flow handles setting new token immediately after verification.
+      // But keeping it as it was in your original code.
       await dispatch(checkAuth());
 
       navigate("/auth/login");
     } catch (error) {
-      toast.error(error.message || "Verification failed");
+      toast.error(error.message || "Verification failed", {
+        icon: <AlertCircle className="text-red-500" />, // Error icon
+      });
     }
   };
 
   useEffect(() => {
+    // Only attempt to submit if all digits are filled and not already loading
     if (code.every((digit) => digit !== "") && !isLoading) {
       handleSubmit(new Event("submit"));
     }
-  }, [code, isLoading]);
+  }, [code, isLoading]); // Depend on code and isLoading
 
   return (
     <div className="max-w-md w-full bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden">
@@ -84,7 +94,7 @@ const EmailVerificationPage = () => {
                 key={index}
                 ref={(el) => (inputRefs.current[index] = el)}
                 type="text"
-                maxLength="6"
+                maxLength="1" // Changed to 1 to allow individual digit input
                 value={digit}
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
