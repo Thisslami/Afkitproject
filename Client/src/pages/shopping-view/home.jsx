@@ -232,7 +232,7 @@ function ShoppingHome() {
       >
         <span className="flex items-center gap-2 mb-2">
           <ShieldCheck className="text-orange-500 w-8 h-10" />
-          Your No.1 store that gives 
+          Your No.1 store that offers 
         </span>
         <span className="text-orange-500 font-extrabold">
           6 months warranty
